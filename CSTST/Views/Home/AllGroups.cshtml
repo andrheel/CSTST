@@ -1,0 +1,30 @@
+﻿<h3>Group list</h3>
+<v-container v-if="!!data">
+    <v-layout v-for="e in data">
+        <v-flex xs1>{{e.id}}</v-flex>
+        <v-flex xs4>{{e.name}}</v-flex>
+        <v-flex xs4>
+            <v-btn :href="'/Home/agroup/' + e.id">SHOW</v-btn>
+            <v-btn @@click="dodelete(e.id)">DEL</v-btn>
+        </v-flex>
+    </v-layout>
+    <v-layout>
+        <v-flex xs1></v-flex>
+        <v-flex xs4>
+            <v-text-field v-model="newtext" style="max-width:300px;" placeholder="new group"></v-text-field>
+        </v-flex>
+        <v-flex xs4>
+            <v-btn @@click="docreate()">ADD</v-btn>
+        </v-flex>
+    </v-layout>
+</v-container>
+
+
+@section PageModel {
+    <script>
+        pagemodel.newtext = "";
+        pagemethods._created = function () { this.poster("/Home/getallgroups", null, this.stdresponce); };
+        pagemethods.docreate = function () { this.poster("/Home/creategroup", { value: this.newtext }, this.stdresponce); };
+        pagemethods.dodelete = function (i) { this.poster("/Home/deletegroup", { value: i }, this.stdresponce); };
+    </script>
+}

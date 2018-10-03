@@ -1,0 +1,30 @@
+﻿<h3>User list</h3>
+<v-container v-if="!!data">
+    <v-layout v-for="e in data">
+        <v-flex xs1>{{e.id}}</v-flex>
+        <v-flex xs4>{{e.name}}</v-flex>
+        <v-flex xs4>
+            <v-btn :href="'/Home/auser/' + e.id">SHOW</v-btn>
+            <v-btn @@click="dodelete(e.id)">DEL</v-btn>
+        </v-flex>
+    </v-layout>
+    <v-layout>
+        <v-flex xs1></v-flex>
+        <v-flex xs4>
+            <v-text-field v-model="newtext" style="max-width:300px;" placeholder="new user"></v-text-field>
+        </v-flex>
+        <v-flex xs4>
+            <v-btn @@click="docreate()">ADD</v-btn>
+        </v-flex>
+    </v-layout>
+</v-container>
+
+
+@section PageModel {
+    <script>
+        pagemodel.newtext = "";
+        pagemethods._created = function () { this.poster("/Home/getallusers", null, this.stdresponce); };
+        pagemethods.docreate = function () { this.poster("/Home/createuser", { value: this.newtext }, this.stdresponce); };
+        pagemethods.dodelete = function (i) { this.poster("/Home/deleteuser", { value: i }, this.stdresponce); };
+    </script>
+}

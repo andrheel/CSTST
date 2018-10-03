@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <title>TST</title>
+    <link href="~/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/css/maicon.css" rel="stylesheet" />
+    <link href="~/lib/vuetify.min.css" rel="stylesheet" />
+    <style>
+        body {
+            padding: 0;
+        }
+
+        .btn {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+    <style class="cp-pen-styles"></style>
+</head>
+<body>
+    <div id="app">
+        <v-app footer toolbar id="keep" v-cloak>
+            <v-toolbar class="indigo darken-1"
+                       clipped-left clipped-right app dark
+                       fixed>
+                <v-toolbar-side-icon></v-toolbar-side-icon>
+                <v-toolbar-title>
+                    <a href="/" class="logo" style="color: #FFF8E1; text-decoration:none">
+                        <b>Admin console</b>
+                        <small></small>
+                    </a>
+                </v-toolbar-title>
+                <v-btn flat href="/Home/AllUsers">Users</v-btn>
+                <v-btn flat href="/Home/AllGroups">Groups</v-btn>
+                <v-spacer></v-spacer>
+                <v-btn flat @@click="resetdb()">Reset DB</v-btn>
+            </v-toolbar>
+
+            <v-content>
+                <v-container>
+                    @RenderBody()
+                </v-container>
+            </v-content>
+
+            <v-snackbar :timeout="8000"
+                        :color="toast.color"
+                        :multi-line="true"
+                        :vertical="false"
+                        v-model="toast.on"
+                        :auto-height="true">
+                {{ toast.text }}
+                <v-btn dark flat @@click.native="toast.on = false">Close</v-btn>
+            </v-snackbar>
+
+        </v-app>
+    </div>
+
+    <script src="~/lib/vue.js"></script>
+    <script src="~/lib/vue-resource.js "></script>
+    <script src="~/lib/vuetify.js"></script>
+    <script>
+        var pagemethods = {};
+        pagemethods.progress = function (onoff) { this.inprogress = onoff; }
+        pagemethods.poster = function (url, data, callback) {
+            this.progress(true);
+            var c = JSON.parse(JSON.stringify(data));
+            console.log(c);
+            this.$http.post(url, c)
+                .then(
+                    (response) => { this.progress(false); callback(response.body); },
+                    (response) => { this.progress(false); 
+                                    this.toast = { on: true, text: response.status + ' ' + response.statusText, color: 'red' };
+                                    console.log("ERROR", response); 
+                                    });
+        }
+        pagemethods.resetdb = function () {
+            this.poster("/Home/resetdb", null, function (data) { 
+                Vue.set(vm, 'toast', data.toast); });
+        }
+        pagemethods._created = function () { };
+        pagemethods.stdresponce = function (resp) {
+            if (!resp) return;
+            if (!!resp.toast) Vue.set(vm, 'toast', resp.toast);
+            if (!!resp.data) Vue.set(vm, 'data', resp.data);
+        }
+
+
+        var pagemodel = {
+            toast: { on: false, text: '', color: 'red' } };
+        pagemodel.message = '';
+        pagemodel.data = {};
+        pagemodel.inprogress = false;
+
+    </script>
+    @RenderSection("PageModel", required: false)
+    <script>
+        var vm = (new Vue({
+            el: '#app',
+            watch: {},
+            methods: pagemethods,
+            data: function () { return pagemodel; },
+            mounted: pagemethods._created
+        }));
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,40 @@
+﻿@model int
+<h3>User details (@Model)</h3>
+
+<v-container v-if="!!data">
+    <v-layout v-if="!!data.usr">
+        <v-flex xs6>
+            <div>Id : {{data.usr.id}}</div>
+            <div>Name : {{data.usr.name}}</div>
+        </v-flex>
+        <v-flex xs6>
+            <h4>Belongs to groups</h4><hr />
+            <v-layout v-for="e in data.belongto">
+                <v-flex xs6>
+                    <div>{{e.name}}</div>
+                </v-flex>
+                <v-flex xs2>
+                    <div><v-btn @@click="dounlink(e.id)">remove</v-btn></div>
+                </v-flex>
+            </v-layout>
+            <v-layout>
+                <v-flex xs6>
+                    <v-text-field v-model="newtext" style="max-width:300px;" placeholder="group name"></v-text-field>
+                </v-flex>
+                <v-flex xs2>
+                    <div><v-btn @@click="dolink()">add</v-btn></div>
+                </v-flex>
+            </v-layout>
+        </v-flex>
+    </v-layout>
+</v-container>
+
+
+@section PageModel {
+    <script>
+        pagemodel.newtext = "";
+        pagemethods._created = function () { this.poster("/Home/getuser", { value: @Model }, this.stdresponce); };
+        pagemethods.dolink = function () { this.poster("/Home/linkusergroup", { value: { key: @Model, value : this.newtext } }, this.stdresponce); };
+        pagemethods.dounlink = function (i) { this.poster("/Home/unlinkusergroup", { value: { key: @Model, value: i} }, this.stdresponce); };
+    </script>
+}

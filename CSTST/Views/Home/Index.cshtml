@@ -1,0 +1,17 @@
+﻿<h3>DB statistics</h3>
+<p v-if="!!data">
+    <table>
+        <tr><td>Users count  </td><td> = {{data.ucnt}}</td></tr>
+        <tr><td>Groups count </td><td> = {{data.gcnt}}</td></tr>
+        <tr><td>Group-group links count</td><td> = {{data.glcnt}}</td></tr>
+        <tr><td>Group-group links count</td><td> = {{data.ugcnt}}</td></tr>
+    </table>
+</p>
+
+@section PageModel {
+    <script>
+        pagemethods._created = function () { this.poster("/Home/statdb", null, this.stdresponce); };
+    </script>
+}
+
+
